@@ -15,7 +15,6 @@ class SENTENCES {
                 )";
             $db->getConnection()->query($sql);
             $insert = "INSERT INTO sqlhistory(sentence) VALUES ('$sentencia')";
-            var_dump($insert);
             $db->getConnection()->query($insert);
             $db->getConnection()->query($sentencia);
             echo "SQL Sentence [" . $sentencia . "] successfully injected";
@@ -29,7 +28,6 @@ class SENTENCES {
                 )";
             $db->getConnection()->query($sql);
             $insert = "INSERT INTO sqlhistory(sentence) VALUES ('$sentencia')";
-            var_dump($insert);
             $db->getConnection()->query($insert);
             $db->getConnection()->query($sentencia);
             $result = $db->getConnection()->query($sentencia);

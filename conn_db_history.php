@@ -1,13 +1,12 @@
 <?php
-class DB {
+class DBH {
     private $_servername = 'localhost';
     private $_username = 'root';
     private $_password = '';
-    private $_database = 'information_schema';
     private $_connection;
     private static $_instance;
     private function __construct() {
-        $this->_connection = new mysqli($this->_servername, $this->_username, $this->_password, $this->_database);
+        $this->_connection = new mysqli($this->_servername, $this->_username, $this->_password);
         if (mysqli_connect_error()) {
             trigger_error('Failed to connect to MySQL: '.mysqli_connect(), E_USER_ERROR);
         }
