@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <title>M07-UF3-PR01</title>
 </head>
 <body>
@@ -30,15 +31,15 @@
         <textarea name="sentencia" id="sentencia" cols="30" rows="10"></textarea>
         <input type="submit" name="submit" id="submit" value="ENTER">
     </form>
-    <textarea name="sqlResult" id="sqlResult" cols="30" rows="10" disabled>
-            <?php
+    <div>
+        <?php var_dump($_SERVER["REQUEST_METHOD"]);
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
             include_once 'sentence.php';
-            isset($_SESSION['display']) ? $_SESSION['display'] : array();
             $sentenciaPOST = isset($_POST['sentencia']) ? $_POST['sentencia'] : '';
             $databasePOST = isset($_POST['database']) ? $_POST['database'] : '';
-            $sentencia = SENTENCES::getInstance();
-            $sentencia->sqlSentence($sentenciaPOST, $databasePOST);
-            ?>
-    </textarea>
+            SENTENCES::sqlSentence($sentenciaPOST, $databasePOST);
+        }
+        ?>
+    </div>
 </body>
 </html>
