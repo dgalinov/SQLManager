@@ -1,0 +1,10 @@
+.container-sm {
+    margin-top: 2em !important;
+}
+.btn-primary {
+    width: 100%;
+}
+h1 {
+    display: flex;
+    justify-content: center;
+}

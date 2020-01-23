@@ -14,11 +14,17 @@ class SENTENCES {
             $db->getConnection()->query($sentencia);
             $result = $db->getConnection()->query($sentencia);
             if ($result->num_rows > 0) {
+                echo "<table class='table'>
+                <tbody>";
                 while($row = $result->fetch_assoc()) {
+                    echo "<tr>";
                     foreach($row as $key=>$value) {
-                        echo $key;
+                        echo "<td>$value</td>";
                     }
+                    echo "</tr>";
                 }
+                echo "</tbody>
+                </table>";
             } else {
                 echo $db->error;
             }
