@@ -21,7 +21,6 @@ $dbPOST = $fav = '';
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
                     <?php
                     include_once 'conn_db.php';
-                    $username = $password = "";
                     $db = DB::getInstance();
                     $conn = $db->getConnection();
                     ?>
@@ -44,10 +43,13 @@ $dbPOST = $fav = '';
                 <div>
                     <?php
                     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                        include_once 'sentence.php';
-                        $sentenciaPOST = isset($_POST['sentencia']) ? $_POST['sentencia'] : '';
-                        $databasePOST = isset($_POST['database']) ? $_POST['database'] : '';
-                        SENTENCES::sqlSentence($sentenciaPOST, $databasePOST);
+                        if (isset($_POST['submit'])) {
+                            include_once 'sentence.php';
+                            $sentenciaPOST = isset($_POST['sentencia']) ? $_POST['sentencia'] : '';
+                            $databasePOST = isset($_POST['database']) ? $_POST['database'] : '';
+                            SENTENCES::sqlSentence($sentenciaPOST, $databasePOST);
+                        }
+                        
                     }
                     ?>
                 </div>
@@ -68,7 +70,6 @@ $dbPOST = $fav = '';
                             <?php
                             $databasePOST = isset($_POST['database']) ? $_POST['database'] : '';
                             $_SESSION['fav'] = isset($_POST['favourites']) ? $_POST['favourites'] : array();
-                            $_SESSION['database'] = isset($databasePOST) ? $databasePOST : '';
                             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 if (isset($_POST['submit'])) {
                                     include_once 'conn_db_history.php';
@@ -90,23 +91,19 @@ $dbPOST = $fav = '';
                                             }
                                             echo "</td>
                                             <td>".$row['executed_at']."</td>
-                                            <td><input type='checkbox' name='favourites[]' value='".$row['id']."' id='".$row['id']."'></td>
+                                            <td><input type='checkbox' name='favourites[]' value='".$row['id']."'></td>
                                             </tr>";
                                         }
                                     }
+                                }
+                                if (isset($_POST['update'])) {
+                                    include_once 'sqlhistory.php';
+                                    HISTORY::updateFavourite();
                                 }
                             }
                             ?>
                         </tbody>
                     </table>
-                    <?php
-                    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                        if (isset($_POST['update'])) {
-                            include_once 'sqlhistory.php';
-                            HISTORY::updateFavourite();
-                        }
-                    }
-                    ?>
                 </form>
             </div>
         </div>
