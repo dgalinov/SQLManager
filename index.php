@@ -1,3 +1,7 @@
+<?php
+session_start();
+$dbPOST = $fav = '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +10,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="./style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <title>M07-UF3-PR01</title>
 </head>
 <body>
@@ -57,34 +62,51 @@
                             <th scope="col">SENTENCE</th>
                             <th scope="col">EXECUTED_AT</th>
                             <th scope="col">FAVOURITE</th>
-                            <th scope="col">ADD FAV</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
+                            $databasePOST = isset($_POST['database']) ? $_POST['database'] : '';
+                            $_SESSION['fav'] = isset($_POST['favourites']) ? $_POST['favourites'] : array();
+                            $_SESSION['database'] = isset($databasePOST) ? $databasePOST : '';
                             if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                                include_once 'conn_db_history.php';
-                                $databasePOST = isset($_POST['database']) ? $_POST['database'] : '';
-                                $database = DBH::getInstance();
-                                $con = $database->getConnection();
-                                $sql2 = "SELECT * FROM sqlhistory";
-                                $database->getConnection()->select_db($databasePOST);
-                                $result = $database->getConnection()->query($sql2);
-                                if ($result->num_rows > 0) {
-                                    while($row = $result->fetch_assoc()) {
-                                        echo "<tr>
-                                        <th scope='row'>".$row['id']."</th>
-                                        <td>".$row['sentence']."</td>
-                                        <td>".$row['executed_at']."</td>
-                                        <td>".$row['favourite']."</td>
-                                        <td><input type='checkbox'></td>
-                                        </tr>";
+                                if (isset($_POST['submit'])) {
+                                    include_once 'conn_db_history.php';
+                                    include_once 'sqlhistory.php';
+                                    $database = DBH::getInstance();
+                                    $con = $database->getConnection();
+                                    $sql2 = "SELECT * FROM sqlhistory ORDER BY executed_at DESC";
+                                    $database->getConnection()->select_db($databasePOST);
+                                    $result = $database->getConnection()->query($sql2);
+                                    if ($result->num_rows > 0) {
+                                        while($row = $result->fetch_assoc()) {
+                                            echo "<tr>
+                                            <th scope='row'>".$row['id']."</th>
+                                            <td>";
+                                            if ($row['favourite'] == 1) {
+                                                echo "<i class='material-icons'>star</i>".$row['sentence'];
+                                            } else {
+                                                echo "<i class='material-icons'>star_border</i>".$row['sentence'];
+                                            }
+                                            echo "</td>
+                                            <td>".$row['executed_at']."</td>
+                                            <td><input type='checkbox' name='favourites[]' value='".$row['id']."' id='".$row['id']."'></td>
+                                            </tr>";
+                                        }
                                     }
                                 }
                             }
                             ?>
                         </tbody>
                     </table>
+                    <?php
+                    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                        if (isset($_POST['update'])) {
+                            include_once 'sqlhistory.php';
+                            HISTORY::updateFavourite();
+                        }
+                    }
+                    ?>
                 </form>
             </div>
         </div>
