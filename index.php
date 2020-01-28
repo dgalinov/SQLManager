@@ -1,6 +1,7 @@
 <?php
-session_start();
-$dbPOST = $fav = '';
+if(!isset($_COOKIE["PHPSESSID"])){
+    session_start();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,6 +24,10 @@ $dbPOST = $fav = '';
                     include_once 'conn_db.php';
                     $db = DB::getInstance();
                     $conn = $db->getConnection();
+                    $dbSelected = isset($_POST['database']) ? $_POST['database'] : '';
+                    $sentence = isset($_POST['sentence']) ? $_POST['sentence'] : '';
+                    $_SESSION['db'] = $dbSelected;
+                    var_dump($_SESSION['db']);
                     ?>
                     <select name="database" id="database" class="form-control">
                         <?php
@@ -30,14 +35,14 @@ $dbPOST = $fav = '';
                         $result = $db->getConnection()->query($sql);
                         if ($result->num_rows > 0) {
                             while($row = $result->fetch_assoc()) {
-                                echo "<option value='".$row[X]."'>".$row[X]."</option>";
+                                echo "<option "; if($dbSelected == $row['X']) { echo "selected"; } echo ">".$row['X']."</option>";
                             }
                         } else {
                             echo $conn->error;
                         }
                         ?>
                     </select>
-                    <textarea name="sentencia" id="sentencia" cols="30" rows="10" class="form-control"></textarea>
+                    <textarea name="sentence" id="sentence" cols="30" rows="10" class="form-control"></textarea>
                     <input type="submit" name="submit" id="submit" value="ENTER" class="btn btn-success">
                 </form>
                 <div>
@@ -45,11 +50,8 @@ $dbPOST = $fav = '';
                     if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if (isset($_POST['submit'])) {
                             include_once 'sentence.php';
-                            $sentenciaPOST = isset($_POST['sentencia']) ? $_POST['sentencia'] : '';
-                            $databasePOST = isset($_POST['database']) ? $_POST['database'] : '';
-                            SENTENCES::sqlSentence($sentenciaPOST, $databasePOST);
+                            SENTENCES::sqlSentence($sentence, $dbSelected);
                         }
-                        
                     }
                     ?>
                 </div>
@@ -108,6 +110,5 @@ $dbPOST = $fav = '';
             </div>
         </div>
     </div>
-    
 </body>
 </html>
