@@ -1,4 +1,7 @@
 <?php
+if(!empty($_SESSION['db'])) { 
+    $dbSelected = isset($_SESSION['db']) ? $_SESSION['db'] : '';
+}
 if(!isset($_COOKIE["PHPSESSID"])){
     session_start();
 }
@@ -26,8 +29,6 @@ if(!isset($_COOKIE["PHPSESSID"])){
                     $conn = $db->getConnection();
                     $dbSelected = isset($_POST['database']) ? $_POST['database'] : '';
                     $sentence = isset($_POST['sentence']) ? $_POST['sentence'] : '';
-                    $_SESSION['db'] = $dbSelected;
-                    var_dump($_SESSION['db']);
                     ?>
                     <select name="database" id="database" class="form-control">
                         <?php
@@ -44,11 +45,18 @@ if(!isset($_COOKIE["PHPSESSID"])){
                     </select>
                     <textarea name="sentence" id="sentence" cols="30" rows="10" class="form-control"></textarea>
                     <input type="submit" name="submit" id="submit" value="ENTER" class="btn btn-success">
+                    <?php
+                    if(!empty($dbSelected)) { 
+                        $_SESSION['db'] = isset($dbSelected) ? $dbSelected : '';
+                        var_dump($_SESSION['db']);
+                    }
+                    ?>
                 </form>
                 <div>
                     <?php
                     if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if (isset($_POST['submit'])) {
+                            
                             include_once 'sentence.php';
                             SENTENCES::sqlSentence($sentence, $dbSelected);
                         }
@@ -71,7 +79,7 @@ if(!isset($_COOKIE["PHPSESSID"])){
                         <tbody>
                             <?php
                             $databasePOST = isset($_POST['database']) ? $_POST['database'] : '';
-                            $_SESSION['fav'] = isset($_POST['favourites']) ? $_POST['favourites'] : array();
+                            //$_SESSION['fav'] = isset($_POST['favourites']) ? $_POST['favourites'] : array();
                             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 if (isset($_POST['submit'])) {
                                     include_once 'conn_db_history.php';
