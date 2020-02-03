@@ -1,10 +1,13 @@
 <?php
-if(!empty($_SESSION['db'])) { 
-    $dbSelected = isset($_SESSION['db']) ? $_SESSION['db'] : '';
-}
-if(!isset($_COOKIE["PHPSESSID"])){
+if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
+if (isset($_SESSION['db'])) {
+    $dbSESSION = $_SESSION['db'];
+} else {
+    $dbSESSION = '';
+}
+var_dump($dbSESSION);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,8 +25,11 @@ if(!isset($_COOKIE["PHPSESSID"])){
         <div class="row">
             <div class="col">
                 <h1>SQL Manager</h1>
+                <!--Aqui se realiza el primer formulario para detectar una base de datos
+                    donde se realizaran todas las injections con sql-->
                 <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
                     <?php
+                    //Entramos en el archivo conn_db.php para realizar una conexion en un clase
                     include_once 'conn_db.php';
                     $db = DB::getInstance();
                     $conn = $db->getConnection();
@@ -45,27 +51,22 @@ if(!isset($_COOKIE["PHPSESSID"])){
                     </select>
                     <textarea name="sentence" id="sentence" cols="30" rows="10" class="form-control"></textarea>
                     <input type="submit" name="submit" id="submit" value="ENTER" class="btn btn-success">
-                    <?php
-                    if(!empty($dbSelected)) { 
-                        $_SESSION['db'] = isset($dbSelected) ? $dbSelected : '';
-                        var_dump($_SESSION['db']);
-                    }
-                    ?>
                 </form>
                 <div>
                     <?php
                     if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         if (isset($_POST['submit'])) {
-                            
                             include_once 'sentence.php';
                             SENTENCES::sqlSentence($sentence, $dbSelected);
+                            $_SESSION['db'] = $dbSelected;
+                            var_dump($dbSelected);
                         }
                     }
                     ?>
                 </div>
             </div>
             <div class="col">
-                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST">
+                <form method="POST">
                     <input type="submit" name="update" id="update" value="UPDATE" class="btn btn-success">
                     <table class="table table-dark">
                         <thead>
@@ -79,11 +80,9 @@ if(!isset($_COOKIE["PHPSESSID"])){
                         <tbody>
                             <?php
                             $databasePOST = isset($_POST['database']) ? $_POST['database'] : '';
-                            //$_SESSION['fav'] = isset($_POST['favourites']) ? $_POST['favourites'] : array();
                             if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 if (isset($_POST['submit'])) {
                                     include_once 'conn_db_history.php';
-                                    include_once 'sqlhistory.php';
                                     $database = DBH::getInstance();
                                     $con = $database->getConnection();
                                     $sql2 = "SELECT * FROM sqlhistory ORDER BY executed_at DESC";
@@ -108,7 +107,7 @@ if(!isset($_COOKIE["PHPSESSID"])){
                                 }
                                 if (isset($_POST['update'])) {
                                     include_once 'sqlhistory.php';
-                                    HISTORY::updateFavourite();
+                                    HISTORY::updateFavourite($_POST['favourites']);
                                 }
                             }
                             ?>
