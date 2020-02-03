@@ -13,7 +13,6 @@ class HISTORY {
                 foreach($id as $value) {
                     if ($value == $row['id']) {
                         if ($row['favourite'] == 1) {
-                            var_dump($row['favourite']);
                             $sqlUpdate = "UPDATE sqlhistory SET favourite = 0 WHERE id = $value";
                         } else {
                             $sqlUpdate = "UPDATE sqlhistory SET favourite = 1 WHERE id = $value";
