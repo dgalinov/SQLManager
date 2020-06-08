@@ -114,8 +114,14 @@ if (isset($_SESSION['db'])) {
                                 if (isset($_POST['update'])) {
                                     include_once 'sqlhistory.php';
                                     HISTORY::updateFavourite($_POST['favourites']);
-                                    echo "<script>parent.window.opener.location.reload();</script>";
-                                    echo "<script>parent.window.close();</script>";
+                                    $i_wanna_reload_the_full_page_on_top = "yes";
+                                    if($i_wanna_reload_the_full_page_on_top == "yes") {
+                                        $reloadneeded = "1";
+                                    } else {
+                                        $reloadneeded = "0";
+                                    } if($reloadneeded > 0) { 
+                                        echo "<script type='text/javascript'>top.window.location='index.php';</script>";
+                                    }
                                 }
                             }
                             ?>
