@@ -114,6 +114,8 @@ if (isset($_SESSION['db'])) {
                                 if (isset($_POST['update'])) {
                                     include_once 'sqlhistory.php';
                                     HISTORY::updateFavourite($_POST['favourites']);
+                                    echo "<script>parent.window.opener.location.reload();</script>";
+                                    echo "<script>parent.window.close();</script>";
                                 }
                             }
                             ?>
